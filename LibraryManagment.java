@@ -8,6 +8,7 @@ class LibraryManagment{
 		System.out.println("-----------------------------------------------------------------");
 
 	 while(true){
+		System.out.println("-----CHOICE-----");
 		System.out.println("1. Add Book");
 		System.out.println("2. Display Books");
 		System.out.println("3. Find Book by ID");
@@ -169,40 +170,42 @@ class Library {
     }
 	
 	public void displayBooks() {
-		System.out.println("hello");
-		System.out.println("Book ID: 1");
-		System.out.println("Title: Java-1");
-		System.out.println("Author: MainJava");
-		System.out.println("Price: 199");
-		System.out.println("Please Add Other Book For Checkout...");
 		{
+			System.out.println("---------------------");
             System.out.println("Library Books:");
+			//Already Books Added...--->
+			addBook(1, "BasicJava", "Java-1", 10.99);
+			addBook(2, "AdvanceJava", "MainJava", 12.50);
             for (int i = 0; i < numBooks; i++) {
+				System.out.println("--------------------");
                 System.out.println(books[i]);
             }
 		}
     }
-	
+	// Find By Id....
 	public Book findBookById(int bookId) {
         for (int i = 0; i < numBooks; i++) {
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getBookId() == bookId) {
                 return books[i];
             }
         }
         return null;
     }
-
+	// Find By Author....
     public Book findBookByAuthor(String author) {
         for (int i = 0; i < numBooks; i++) {
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getAuthor().equalsIgnoreCase(author)) {
                 return books[i];
             }
         }
         return null;
     }
-
+	// Find By Price....
     public Book findBookByPrice(double price) {
         for (int i = 0; i < numBooks; i++) {
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getPrice() == price) {
                 return books[i];
             }
