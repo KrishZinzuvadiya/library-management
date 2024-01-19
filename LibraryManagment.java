@@ -32,7 +32,9 @@ class LibraryManagment{
                     String author = sc.nextLine();
                     System.out.print("Enter book price: $");
                     double price = sc.nextDouble();
-                    library.addBook(bookId, title, author, price);
+					System.out.print("Enter available copies: ");
+                    int availableCopies = sc.nextInt();
+                    library.addBook(bookId, title, author, price, availableCopies);
                     break;
 					}
 					case 2:{
@@ -108,13 +110,15 @@ class Book {
 	String author;
 	double price;
 	boolean available;
+	int availableCopies;
 	
-	public Book(int bookId, String title, String author, double price) {
+	public Book(int bookId, String title, String author, double price, int availableCopies) {
 		this.bookId = bookId;
 		this.title = title;
 		this.author = author;
 		this.price = price;
 		this.available = true;
+		this.availableCopies=availableCopies;
     }
 	
 	int getBookId(){
@@ -136,16 +140,26 @@ class Book {
 	boolean isAvailable() {
 		return available;
 	}
-
+	int getAvailableCopies(){
+		return availableCopies;
+	}
+	void decreaseAvailableCopies(){
+		if(availableCopies>0){
+			availableCopies--;
+		}
+	}
+	void increaseAvailableCopies(){
+		availableCopies++;
+	}
 	void markAsUnavailable() {
 		available = false;
 	}
-
 	void markAsAvailable() {
 		available = true;
 	}
 	public String toString() {
-		return "Book ID: " + bookId + "\nTitle: " + title + "\nAuthor: " + author + "\nPrice: $" + price + "\nAvailable: " + (available ? "Yes" : "No");
+		String availabilityStatus = (availableCopies > 0) ? "Yes" : "No";
+		return "Book ID: " + bookId + "\nTitle: " + title + "\nAuthor: " + author + "\nPrice: $" + price + "\nAvailable Copies: " + availableCopies + "\nAvailable: " + availabilityStatus;
 	}
 }
 class Library {
@@ -157,11 +171,13 @@ class Library {
         this.capacity = capacity;
         this.books = new Book[capacity];
         this.numBooks = 0;
+		addBook(1, "BasicJava", "Java-1", 10.99,5);
+			addBook(2, "AdvanceJava", "MainJava", 12.50,3);
     }
 	
-	 public void addBook(int bookId, String title, String author, double price) {
+	 public void addBook(int bookId, String title, String author, double price, int availableCopies) {
         if (numBooks < capacity) {
-            Book newBook = new Book(bookId, title, author, price);
+            Book newBook = new Book(bookId, title, author, price, availableCopies);
             books[numBooks++] = newBook;
             System.out.println("Book added successfully!");
         } else {
@@ -174,8 +190,7 @@ class Library {
 			System.out.println("---------------------");
             System.out.println("Library Books:");
 			//Already Books Added...--->
-			addBook(1, "BasicJava", "Java-1", 10.99);
-			addBook(2, "AdvanceJava", "MainJava", 12.50);
+			
             for (int i = 0; i < numBooks; i++) {
 				System.out.println("--------------------");
                 System.out.println(books[i]);
@@ -216,8 +231,8 @@ class Library {
     public void checkoutBook(int bookId) {
         Book book = findBookById(bookId);
         if (book != null) {
-            if (book.isAvailable()) {
-                book.markAsUnavailable();
+            if (book.getAvailableCopies()>0 ) {
+				book.decreaseAvailableCopies();
                 System.out.println("Book checked out successfully!");
             } else {
                 System.out.println("Book is not available for checkout.");
@@ -231,6 +246,7 @@ class Library {
         Book book = findBookById(bookId);
         if (book != null) {
             book.markAsAvailable();
+			book.increaseAvailableCopies();
             System.out.println("Book returned successfully!");
         } else {
             System.out.println("Book not found in the library.");
