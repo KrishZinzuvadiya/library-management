@@ -159,7 +159,7 @@ class Book {
 	}
 	public String toString() {
 		String availabilityStatus = (availableCopies > 0) ? "Yes" : "No";
-		return "Book ID: " + bookId + "\nTitle: " + title + "\nAuthor: " + author + "\nPrice: $" + price + "\nAvailable Copies: " + availableCopies + "\nAvailable: " + availabilityStatus;
+		return "Book ID: " + bookId + "\nTitle: " + title + "\nAuthor: " + author + "\nPrice:$ " + price + "\nAvailable Copies: " + availableCopies + "\nAvailable: " + availabilityStatus;
 	}
 }
 class Library {
@@ -171,8 +171,8 @@ class Library {
         this.capacity = capacity;
         this.books = new Book[capacity];
         this.numBooks = 0;
-		addBook(1, "BasicJava", "Java-1", 10.99,5);
-			addBook(2, "AdvanceJava", "MainJava", 12.50,3);
+		addBook(1, "BasicJava", "Java-1", 12.3,5);
+		addBook(2, "AdvanceJava", "MainJava", 24.9,3);
     }
 	
 	 public void addBook(int bookId, String title, String author, double price, int availableCopies) {
@@ -220,7 +220,7 @@ class Library {
 	// Find By Price....
     public Book findBookByPrice(double price) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getPrice() == price) {
                 return books[i];
             }
