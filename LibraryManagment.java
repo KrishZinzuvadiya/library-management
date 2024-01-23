@@ -1,48 +1,119 @@
 import java.util.*;
-class LibraryManagment{
-	public static void main(String args[]){
-	Scanner sc = new Scanner(System.in);
-	 Library library = new Library(10);
-	 	System.out.println("-----------------------------------------------------------------");
-		System.out.println("------------------LIBRARY MANAGMENT SYSTEM-----------------------");
-		System.out.println("-----------------------------------------------------------------");
+class TestLibrary {
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+        Library library = new Library(10);
+        Admin admin = new Admin("admin", "admin123");
 
-	 while(true){
-		System.out.println("-----CHOICE-----");
-		System.out.println("1. Add Book");
-		System.out.println("2. Display Books");
-		System.out.println("3. Find Book by ID");
-		System.out.println("4. Find Book by Author");
-		System.out.println("5. Find Book by Price");
-		System.out.println("6. Checkout Book");
-		System.out.println("7. Return Book");
-		System.out.println("8. Exit");
-		System.out.print("Enter your choice: ");
-		int choice = sc.nextInt();
-		sc.nextLine();
-		
-		switch(choice){
-			 case 1:{
-                    System.out.print("Enter book ID: ");
-                    int bookId = sc.nextInt();
-                    System.out.print("Enter book title: ");
-                    String title = sc.next();
-					sc.nextLine();
-                    System.out.print("Enter author name: ");
-                    String author = sc.nextLine();
-                    System.out.print("Enter book price: $");
-                    double price = sc.nextDouble();
-					System.out.print("Enter available copies: ");
-                    int availableCopies = sc.nextInt();
-                    library.addBook(bookId, title, author, price, availableCopies);
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println("------------------LIBRARY MANAGEMENT SYSTEM-----------------------");
+        System.out.println("-----------------------------------------------------------------");
+
+        while (true) {
+            System.out.println("-----CHOICE-----");
+            System.out.println("1. Admin Login");
+            System.out.println("2. Customer Menu");
+            System.out.println("3. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    admin.adminLogin(sc, library);
                     break;
-					}
-					case 2:{
+
+                case 2:
+                    Customer.displayCustomerMenu(sc, library);
+                    break;
+
+                case 3:
+                    System.out.println("Exiting the program. Goodbye!");
+                    System.exit(0);
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
+class Admin {
+    private String username;
+    private String password;
+
+    public Admin(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public void adminLogin(Scanner sc, Library library) {
+        System.out.print("Enter admin username: ");
+        String enteredUsername = sc.next();
+        System.out.print("Enter admin password: ");
+        String enteredPassword = sc.next();
+
+        if (enteredUsername.equals(username) && enteredPassword.equals(password)) {
+            adminMenu(sc, library);
+        } else {
+            System.out.println("Invalid username or password. Login failed.");
+        }
+    }
+
+    private void adminMenu(Scanner sc, Library library) {
+        while (true) {
+            System.out.println("-----ADMIN MENU-----");
+            System.out.println("1. Add Book");
+            System.out.println("2. Remove Book");
+            System.out.println("3. Logout");
+
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    library.addBook(sc);
+                    break;
+
+                case 2:
+                    library.removeBook(sc);
+                    break;
+
+                case 3:
+                    System.out.println("Logging out from admin account.");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
+
+class Customer {
+    public static void displayCustomerMenu(Scanner sc, Library library) {
+        while (true) {
+            System.out.println("-----CUSTOMER MENU-----");
+            System.out.println("1. Display Books");
+            System.out.println("2. Find Book by ID");
+            System.out.println("3. Find Book by Author");
+            System.out.println("4. Find Book by Price");
+            System.out.println("5. Checkout Book");
+            System.out.println("6. Return Book");
+            System.out.println("7. Logout");
+
+            System.out.print("Enter your choice: ");
+            int choice = sc.nextInt();
+            sc.nextLine(); // consume the newline character
+
+            switch (choice) {
+                case 1:
                     library.displayBooks();
                     break;
-					}
-					
-					case 3:{
+
+                case 2:
                     System.out.print("Enter book ID to find: ");
                     int findBookId = sc.nextInt();
                     Book foundBookById = library.findBookById(findBookId);
@@ -52,9 +123,8 @@ class LibraryManagment{
                         System.out.println("Book not found by ID.");
                     }
                     break;
-					}
-					
-					case 4: {
+
+                case 3:
                     System.out.print("Enter author name to find: ");
                     String findAuthor = sc.nextLine();
                     Book foundBookByAuthor = library.findBookByAuthor(findAuthor);
@@ -64,9 +134,8 @@ class LibraryManagment{
                         System.out.println("Book not found by author name.");
                     }
                     break;
-					}
-					
-					case 5:{
+
+                case 4:
                     System.out.print("Enter book price to find: $");
                     double findPrice = sc.nextDouble();
                     Book foundBookByPrice = library.findBookByPrice(findPrice);
@@ -76,92 +145,30 @@ class LibraryManagment{
                         System.out.println("Book not found by price.");
                     }
                     break;
-					}
-					
-					case 6:{
+
+                case 5:
                     System.out.print("Enter the book ID to checkout: ");
                     int checkoutBookId = sc.nextInt();
                     library.checkoutBook(checkoutBookId);
                     break;
-					}
-					
-					case 7: {
+
+                case 6:
                     System.out.print("Enter the book ID to return: ");
                     int returnBookId = sc.nextInt();
                     library.returnBook(returnBookId);
                     break;
-					}
-					
-					case 8:{
-                    System.out.println("Exiting the program. Goodbye!");
-                    System.exit(0);
-                    break;
-					}
-					default:{
-                    System.out.println("Invalid choice. Please try again.");
-				}
-			}
-		}
-	}
-}
-class Book {	
-	int bookId;
-	String title;
-	String author;
-	double price;
-	boolean available;
-	int availableCopies;
-	
-	public Book(int bookId, String title, String author, double price, int availableCopies) {
-		this.bookId = bookId;
-		this.title = title;
-		this.author = author;
-		this.price = price;
-		this.available = true;
-		this.availableCopies=availableCopies;
-    }
-	
-	int getBookId(){
-		return bookId;
-	}
-	
-	String getTitle(){
-		return title;
-	}
-	
-	String getAuthor() {
-		return author;
-	}
 
-	double getPrice() {
-		return price;
-	}
-	
-	boolean isAvailable() {
-		return available;
-	}
-	int getAvailableCopies(){
-		return availableCopies;
-	}
-	void decreaseAvailableCopies(){
-		if(availableCopies>0){
-			availableCopies--;
-		}
-	}
-	void increaseAvailableCopies(){
-		availableCopies++;
-	}
-	void markAsUnavailable() {
-		available = false;
-	}
-	void markAsAvailable() {
-		available = true;
-	}
-	public String toString() {
-		String availabilityStatus = (availableCopies > 0) ? "Yes" : "No";
-		return "Book ID: " + bookId + "\nTitle: " + title + "\nAuthor: " + author + "\nPrice:$ " + price + "\nAvailable Copies: " + availableCopies + "\nAvailable: " + availabilityStatus;
-	}
+                case 7:
+                    System.out.println("Logging out from customer account.");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
 }
+
 class Library {
 	Book[] books;
 	int capacity;
@@ -182,6 +189,32 @@ class Library {
             System.out.println("Book added successfully!");
         } else {
             System.out.println("Library is full. Cannot add more books.");
+        }
+    }
+	//----->
+	 public void removeBook(int bookId) {
+        int indexToRemove = -1;
+
+        for (int i = 0; i < numBooks; i++) {
+            if (books[i].getBookId() == bookId) {
+                indexToRemove = i;
+                break;
+            }
+        }
+
+        if (indexToRemove != -1) {
+            // Shift books to fill the gap
+            for (int i = indexToRemove; i < numBooks - 1; i++) {
+                books[i] = books[i + 1];
+            }
+
+            // Set the last element to null and decrement numBooks
+            books[numBooks - 1] = null;
+            numBooks--;
+
+            System.out.println("Book removed successfully!");
+        } else {
+            System.out.println("Book not found in the library.");
         }
     }
 	
@@ -251,5 +284,28 @@ class Library {
         } else {
             System.out.println("Book not found in the library.");
         }
+    }
+	
+	
+	 public void addBook(Scanner sc) {
+        System.out.print("Enter book ID: ");
+        int bookId = sc.nextInt();
+        System.out.print("Enter book title: ");
+        String title = sc.next();
+        sc.nextLine();
+        System.out.print("Enter author name: ");
+        String author = sc.nextLine();
+        System.out.print("Enter book price: $");
+        double price = sc.nextDouble();
+        System.out.print("Enter available copies: ");
+        int availableCopies = sc.nextInt();
+
+        addBook(bookId, title, author, price, availableCopies);
+    }
+
+    public void removeBook(Scanner sc) {
+        System.out.print("Enter the book ID to remove: ");
+        int removeBookId = sc.nextInt();
+        removeBook(removeBookId);
     }
 }
