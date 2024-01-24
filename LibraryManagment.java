@@ -1,16 +1,21 @@
 import java.util.*;
-class TestLibrary {
+class LibraryManagment {
+	
+	public static final String BLUE_COLOR = "\u001B[34m";
+	public static final String GREEN_COLOR = "\u001B[32m";
+	public static final String RESET_COLOR = "\u001B[0m";
+	public static final String YELLOW_COLOR = "\u001B[33m";
+
     public static void main(String args[]) {
         Scanner sc = new Scanner(System.in);
         Library library = new Library(10);
-        Admin admin = new Admin("admin", "admin123");
-
-        System.out.println("-----------------------------------------------------------------");
+        Admin admin = new Admin("krish", "krish@123");
+        System.out.println(GREEN_COLOR+"-----------------------------------------------------------------");
         System.out.println("------------------LIBRARY MANAGEMENT SYSTEM-----------------------");
-        System.out.println("-----------------------------------------------------------------");
+        System.out.println("-----------------------------------------------------------------"+RESET_COLOR);
 
         while (true) {
-            System.out.println("-----CHOICE-----");
+            System.out.println(YELLOW_COLOR+"-----CHOICE-----"+RESET_COLOR);
             System.out.println("1. Admin Login");
             System.out.println("2. Customer Menu");
             System.out.println("3. Exit");
@@ -40,6 +45,9 @@ class TestLibrary {
 }
 
 class Admin {
+	public static final String RED_COLOR = "\u001B[31m";
+	public static final String RESET_COLOR = "\u001B[0m";
+
     private String username;
     private String password;
 
@@ -63,7 +71,7 @@ class Admin {
 
     private void adminMenu(Scanner sc, Library library) {
         while (true) {
-            System.out.println("-----ADMIN MENU-----");
+            System.out.println(RED_COLOR+"-----ADMIN MENU-----"+RESET_COLOR);
             System.out.println("1. Add Book");
             System.out.println("2. Remove Book");
             System.out.println("3. Logout");
@@ -93,20 +101,23 @@ class Admin {
 
 
 class Customer {
+	public static final String ORANGE_COLOR = "\u001B[38;5;208m";
+	public static final String RESET_COLOR = "\u001B[0m";
+
     public static void displayCustomerMenu(Scanner sc, Library library) {
         while (true) {
-            System.out.println("-----CUSTOMER MENU-----");
+            System.out.println(ORANGE_COLOR+"-----CUSTOMER MENU-----"+RESET_COLOR);
             System.out.println("1. Display Books");
             System.out.println("2. Find Book by ID");
             System.out.println("3. Find Book by Author");
             System.out.println("4. Find Book by Price");
             System.out.println("5. Checkout Book");
             System.out.println("6. Return Book");
-            System.out.println("7. Logout");
+            System.out.println("7. Exit");
 
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
-            sc.nextLine(); // consume the newline character
+            sc.nextLine(); 
 
             switch (choice) {
                 case 1:
@@ -159,7 +170,7 @@ class Customer {
                     break;
 
                 case 7:
-                    System.out.println("Logging out from customer account.");
+                    System.out.println("Exiting From Customer Account.");
                     return;
 
                 default:
@@ -173,25 +184,34 @@ class Library {
 	Book[] books;
 	int capacity;
 	int numBooks;
-	
+	private static boolean booksInitialized = false;
 	public Library(int capacity) {
         this.capacity = capacity;
         this.books = new Book[capacity];
         this.numBooks = 0;
-		addBook(1, "BasicJava", "Java-1", 12.3,5);
-		addBook(2, "AdvanceJava", "MainJava", 24.9,3);
+            books[numBooks++] = new Book(1, "BasicJava", "Java-1", 12.3, 5);
+    books[numBooks++] = new Book(2, "AdvanceJava", "MainJava", 24.9, 3);
     }
 	
-	 public void addBook(int bookId, String title, String author, double price, int availableCopies) {
-        if (numBooks < capacity) {
-            Book newBook = new Book(bookId, title, author, price, availableCopies);
-            books[numBooks++] = newBook;
-            System.out.println("Book added successfully!");
-        } else {
-            System.out.println("Library is full. Cannot add more books.");
+public void addBook(int bookId, String title, String author, double price, int availableCopies) {
+    for (int i = 0; i < numBooks; i++) {
+        if (books[i] != null && books[i].getBookId() == bookId) {
+            System.out.println("Error: Book with the same Book ID already exists.");
+            return;
         }
     }
-	//----->
+
+    if (numBooks < capacity) {
+        Book newBook = new Book(bookId, title, author, price, availableCopies);
+        books[numBooks++] = newBook;
+        System.out.println("Book added successfully!");
+    } else {
+        System.out.println("Library is full. Cannot add more books.");
+    }
+}
+
+
+
 	 public void removeBook(int bookId) {
         int indexToRemove = -1;
 
@@ -203,12 +223,11 @@ class Library {
         }
 
         if (indexToRemove != -1) {
-            // Shift books to fill the gap
+			
             for (int i = indexToRemove; i < numBooks - 1; i++) {
                 books[i] = books[i + 1];
             }
-
-            // Set the last element to null and decrement numBooks
+			
             books[numBooks - 1] = null;
             numBooks--;
 
@@ -218,22 +237,31 @@ class Library {
         }
     }
 	
-	public void displayBooks() {
-		{
-			System.out.println("---------------------");
-            System.out.println("Library Books:");
-			//Already Books Added...--->
-			
-            for (int i = 0; i < numBooks; i++) {
-				System.out.println("--------------------");
-                System.out.println(books[i]);
-            }
-		}
+	
+    public void displayBooks() {
+    if (numBooks == 0) {
+        System.out.println("No books available in the library.");
+    } else {
+        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
+                "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+
+        for (int i = 0; i < numBooks; i++) {
+            String availabilityStatus = (books[i].getAvailableCopies() > 0) ? "Yes" : "No";
+            System.out.printf("| %-4d | %-20s | %-15s | $%-7.2f | %-17d | %-16s |\n",
+                    books[i].getBookId(), books[i].getTitle(), books[i].getAuthor(),
+                    books[i].getPrice(), books[i].getAvailableCopies(), availabilityStatus);
+        }
+
+        System.out.println("---------------------------------------------------------------------------------------------------");
     }
+}
+
 	// Find By Id....
 	public Book findBookById(int bookId) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getBookId() == bookId) {
                 return books[i];
             }
@@ -243,7 +271,7 @@ class Library {
 	// Find By Author....
     public Book findBookByAuthor(String author) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getAuthor().equalsIgnoreCase(author)) {
                 return books[i];
             }
@@ -253,7 +281,7 @@ class Library {
 	// Find By Price....
     public Book findBookByPrice(double price) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getPrice() == price) {
                 return books[i];
             }
@@ -284,8 +312,7 @@ class Library {
         } else {
             System.out.println("Book not found in the library.");
         }
-    }
-	
+    } 
 	
 	 public void addBook(Scanner sc) {
         System.out.print("Enter book ID: ");
