@@ -5,7 +5,7 @@ class LibraryManagment {
 	public static final String GREEN_COLOR = "\u001B[32m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	public static final String YELLOW_COLOR = "\u001B[33m";
-
+	public static final String WHITE_COLOR = "\u001B[37m";
     public static void main(String args[]) {
         Scanner sc = new Scanner(System.in);
         Library library = new Library(10);
@@ -22,6 +22,7 @@ class LibraryManagment {
 
             System.out.print("Enter your choice: ");
             int choice = sc.nextInt();
+			
 
             switch (choice) {
                 case 1:
@@ -47,7 +48,12 @@ class LibraryManagment {
 class Admin {
 	public static final String RED_COLOR = "\u001B[31m";
 	public static final String RESET_COLOR = "\u001B[0m";
-
+	public static final String CYAN_COLOR = "\u001B[36m";
+	public static final String MAGENTA_COLOR = "\u001B[35m";
+	private int loginAttempts = 3; // Set the maximum number of login attempts
+    private boolean locked = false;	
+	
+	
     private String username;
     private String password;
 
@@ -57,15 +63,30 @@ class Admin {
     }
 
     public void adminLogin(Scanner sc, Library library) {
+		if (locked) {
+            System.out.println("Account locked. Please contact the administrator.");
+            return;
+        }
         System.out.print("Enter admin username: ");
         String enteredUsername = sc.next();
         System.out.print("Enter admin password: ");
         String enteredPassword = sc.next();
 
         if (enteredUsername.equals(username) && enteredPassword.equals(password)) {
+			loginAttempts = 3;
+			System.out.println(MAGENTA_COLOR+"Welcome To Admin Account."+RESET_COLOR);
+
             adminMenu(sc, library);
         } else {
+			loginAttempts--;
             System.out.println("Invalid username or password. Login failed.");
+			
+			 if (loginAttempts > 0) {
+                System.out.println(CYAN_COLOR+"Remaining login attempts: " + loginAttempts+RESET_COLOR);
+            } else {
+                locked = true;
+                System.out.println("Account locked. Please contact the administrator.");
+            }
         }
     }
 
@@ -103,9 +124,11 @@ class Admin {
 class Customer {
 	public static final String ORANGE_COLOR = "\u001B[38;5;208m";
 	public static final String RESET_COLOR = "\u001B[0m";
+	public static final String MAGENTA_COLOR = "\u001B[35m";
 
     public static void displayCustomerMenu(Scanner sc, Library library) {
         while (true) {
+			System.out.println(MAGENTA_COLOR+"Welcome To Customer Account."+RESET_COLOR);
             System.out.println(ORANGE_COLOR+"-----CUSTOMER MENU-----"+RESET_COLOR);
             System.out.println("1. Display Books");
             System.out.println("2. Find Book by ID");
@@ -125,36 +148,21 @@ class Customer {
                     break;
 
                 case 2:
-                    System.out.print("Enter book ID to find: ");
+					System.out.print("Enter book ID to find: ");
                     int findBookId = sc.nextInt();
-                    Book foundBookById = library.findBookById(findBookId);
-                    if (foundBookById != null) {
-                        System.out.println("Book found: " + foundBookById);
-                    } else {
-                        System.out.println("Book not found by ID.");
-                    }
+					library.displayBookById(findBookId);
                     break;
 
                 case 3:
                     System.out.print("Enter author name to find: ");
                     String findAuthor = sc.nextLine();
-                    Book foundBookByAuthor = library.findBookByAuthor(findAuthor);
-                    if (foundBookByAuthor != null) {
-                        System.out.println("Book found: " + foundBookByAuthor);
-                    } else {
-                        System.out.println("Book not found by author name.");
-                    }
+                     library.displayBookByAuthor(findAuthor);
                     break;
 
                 case 4:
                     System.out.print("Enter book price to find: $");
                     double findPrice = sc.nextDouble();
-                    Book foundBookByPrice = library.findBookByPrice(findPrice);
-                    if (foundBookByPrice != null) {
-                        System.out.println("Book found: " + foundBookByPrice);
-                    } else {
-                        System.out.println("Book not found by price.");
-                    }
+                    library.displayBookByPrice(findPrice);
                     break;
 
                 case 5:
@@ -185,10 +193,14 @@ class Library {
 	int capacity;
 	int numBooks;
 	private static boolean booksInitialized = false;
+    private boolean[] checkedOutBooks;
+	
 	public Library(int capacity) {
         this.capacity = capacity;
         this.books = new Book[capacity];
+		this.checkedOutBooks = new boolean[capacity];
         this.numBooks = 0;
+		
             books[numBooks++] = new Book(1, "BasicJava", "Java-1", 12.3, 5);
     books[numBooks++] = new Book(2, "AdvanceJava", "MainJava", 24.9, 3);
     }
@@ -239,6 +251,7 @@ public void addBook(int bookId, String title, String author, double price, int a
 	
 	
     public void displayBooks() {
+
     if (numBooks == 0) {
         System.out.println("No books available in the library.");
     } else {
@@ -261,27 +274,65 @@ public void addBook(int bookId, String title, String author, double price, int a
 	// Find By Id....
 	public Book findBookById(int bookId) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getBookId() == bookId) {
                 return books[i];
             }
         }
         return null;
     }
+	
+	public void displayBookById(int bookId) {
+        Book foundBook = findBookById(bookId);
+        if (foundBook != null) {
+            System.out.println("Book found:");
+            System.out.println("---------------------------------------------------------------------------------------------------");
+            System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
+                    "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
+            System.out.println("---------------------------------------------------------------------------------------------------");
+
+            String availabilityStatus = (foundBook.getAvailableCopies() > 0) ? "Yes" : "No";
+            System.out.printf("| %-4d | %-20s | %-15s | $%-7.2f | %-17d | %-16s |\n",
+                    foundBook.getBookId(), foundBook.getTitle(), foundBook.getAuthor(),
+                    foundBook.getPrice(), foundBook.getAvailableCopies(), availabilityStatus);
+
+            System.out.println("---------------------------------------------------------------------------------------------------");
+        } else {
+            System.out.println("Book not found by ID.");
+        }
+    }
 	// Find By Author....
     public Book findBookByAuthor(String author) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getAuthor().equalsIgnoreCase(author)) {
                 return books[i];
             }
         }
         return null;
     }
+	
+	public void displayBookByAuthor(String author) {
+    Book foundBook = findBookByAuthor(author);
+    if (foundBook != null) {
+        System.out.println("Book found:");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
+                "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+
+        String availabilityStatus = (foundBook.getAvailableCopies() > 0) ? "Yes" : "No";
+        System.out.printf("| %-4d | %-20s | %-15s | $%-7.2f | %-17d | %-16s |\n",
+                foundBook.getBookId(), foundBook.getTitle(), foundBook.getAuthor(),
+                foundBook.getPrice(), foundBook.getAvailableCopies(), availabilityStatus);
+
+        System.out.println("---------------------------------------------------------------------------------------------------");
+    } else {
+        System.out.println("Book not found by Author.");
+    }
+}
+
 	// Find By Price....
     public Book findBookByPrice(double price) {
         for (int i = 0; i < numBooks; i++) {
-			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
             if (books[i].getPrice() == price) {
                 return books[i];
             }
@@ -289,30 +340,64 @@ public void addBook(int bookId, String title, String author, double price, int a
         return null;
     }
 
+	 public void displayBookByPrice(double price) {
+        Book foundBook = findBookByPrice(price);
+        if (foundBook != null) {
+            System.out.println("Book found:");
+            System.out.println("---------------------------------------------------------------------------------------------------");
+            System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
+                    "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
+            System.out.println("---------------------------------------------------------------------------------------------------");
+
+            String availabilityStatus = (foundBook.getAvailableCopies() > 0) ? "Yes" : "No";
+            System.out.printf("| %-4d | %-20s | %-15s | $%-7.2f | %-17d | %-16s |\n",
+                    foundBook.getBookId(), foundBook.getTitle(), foundBook.getAuthor(),
+                    foundBook.getPrice(), foundBook.getAvailableCopies(), availabilityStatus);
+
+            System.out.println("---------------------------------------------------------------------------------------------------");
+        } else {
+            System.out.println("Book not found by Price.");
+        }
+    }
+	
+    
     public void checkoutBook(int bookId) {
-        Book book = findBookById(bookId);
-        if (book != null) {
-            if (book.getAvailableCopies()>0 ) {
-				book.decreaseAvailableCopies();
-                System.out.println("Book checked out successfully!");
-            } else {
-                System.out.println("Book is not available for checkout.");
-            }
+        int index = findBookIndexById(bookId);
+
+        if (index != -1 && books[index].getAvailableCopies() > 0) {
+            books[index].decreaseAvailableCopies();
+            checkedOutBooks[index] = true;
+            System.out.println("Book checked out successfully!");
+        } else if (index != -1) {
+            System.out.println("Book is not available for checkout.");
         } else {
             System.out.println("Book not found in the library.");
         }
     }
-
+	
+	
     public void returnBook(int bookId) {
-        Book book = findBookById(bookId);
-        if (book != null) {
-            book.markAsAvailable();
-			book.increaseAvailableCopies();
+        int index = findBookIndexById(bookId);
+
+        if (index != -1 && checkedOutBooks[index]) {
+            books[index].increaseAvailableCopies();
+            checkedOutBooks[index] = false;
             System.out.println("Book returned successfully!");
+        } else if (index != -1) {
+            System.out.println("Book is not checked out.");
         } else {
             System.out.println("Book not found in the library.");
         }
-    } 
+    }
+	
+	private int findBookIndexById(int bookId) {
+        for (int i = 0; i < numBooks; i++) {
+            if (books[i] != null && books[i].getBookId() == bookId) {
+                return i;
+            }
+        }
+        return -1;
+    }
 	
 	 public void addBook(Scanner sc) {
         System.out.print("Enter book ID: ");
