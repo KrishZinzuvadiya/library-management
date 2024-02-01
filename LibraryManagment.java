@@ -1,6 +1,6 @@
 import java.util.*;
 
-class LibraryManagment {
+class ja {
 	
 	public static final String BLUE_COLOR = "\u001B[34m";
 	public static final String GREEN_COLOR = "\u001B[32m";
@@ -163,9 +163,9 @@ class Customer {
                     break;
 
                 case 4:
-                    System.out.print("Enter book price to find: $");
-                    double findPrice = sc.nextDouble();
-                    library.displayBookByPrice(findPrice);
+                     System.out.print("Enter the maximum price: $");
+                    double maxPrice = sc.nextDouble();
+                    library.displayBooksUnderPrice(maxPrice);
                     break;
 
                 case 5:
@@ -422,35 +422,50 @@ class Library {
 }
 
 	//--> Find Book by Price... & ... Display Format
-    public Book findBookByPrice(double price) {
+   public Book[] findBooksUnderPrice(double price) {
+    Book[] matchingBooks = new Book[numBooks];
+    int count = 0;
+
+    for (int i = 0; i < numBooks; i++) {
+        if (books[i].getPrice() <= price) {
+            matchingBooks[count++] = books[i];
+        }
+    }
+
+    return null;
+}
+
+	public void displayBooksUnderPrice(double maxPrice) {
+    int count = 0;
+
+    for (int i = 0; i < numBooks; i++) {
+        if (books[i].getPrice() <= maxPrice) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        System.out.println("No books found under the specified price.");
+    } else {
+        System.out.println("Books under the specified price:");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
+                "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+
         for (int i = 0; i < numBooks; i++) {
-            if (books[i].getPrice() == price) {
-                return books[i];
+            if (books[i].getPrice() <= maxPrice) {
+                String availabilityStatus = (books[i].getAvailableCopies() > 0) ? "Yes" : "No";
+                System.out.printf("| %-4d | %-20s | %-15s | $%-7.2f | %-17d | %-16s |\n",
+                        books[i].getBookId(), books[i].getTitle(), books[i].getAuthor(),
+                        books[i].getPrice(), books[i].getAvailableCopies(), availabilityStatus);
             }
         }
-        return null;
+
+        System.out.println("---------------------------------------------------------------------------------------------------");
     }
+}
 
-	 public void displayBookByPrice(double price) {
-        Book foundBook = findBookByPrice(price);
-        if (foundBook != null) {
-            System.out.println("Book found:");
-            System.out.println("---------------------------------------------------------------------------------------------------");
-            System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
-                    "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
-            System.out.println("---------------------------------------------------------------------------------------------------");
-
-            String availabilityStatus = (foundBook.getAvailableCopies() > 0) ? "Yes" : "No";
-            System.out.printf("| %-4d | %-20s | %-15s | $%-7.2f | %-17d | %-16s |\n",
-                    foundBook.getBookId(), foundBook.getTitle(), foundBook.getAuthor(),
-                    foundBook.getPrice(), foundBook.getAvailableCopies(), availabilityStatus);
-
-            System.out.println("---------------------------------------------------------------------------------------------------");
-        } else {
-            System.out.println("Book not found by Price.");
-        }
-    }
-	
     //--> Checkout book method...
     public void checkoutBook(int bookId) {
         int index = findBookIndexById(bookId);
