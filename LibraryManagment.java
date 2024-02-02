@@ -6,6 +6,7 @@ class LibraryManagment {
 	public static final String GREEN_COLOR = "\u001B[32m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	public static final String YELLOW_COLOR = "\u001B[33m";
+	public static final String COREL_COLOR = "\u001B[38;5;209m";
 
 	public static void main(String args[]) {
 		Scanner sc = new Scanner(System.in);
@@ -17,9 +18,9 @@ class LibraryManagment {
 
 		while (true) {
 			System.out.println(YELLOW_COLOR+"-----CHOICE-----"+RESET_COLOR);
-			System.out.println("1. Admin Login");
+			System.out.println(COREL_COLOR+"1. Admin Login");
 			System.out.println("2. Customer Menu");
-			System.out.println("3. Exit");
+			System.out.println("3. Exit"+RESET_COLOR);
 			
 			System.out.print("Enter your choice: ");
 			int choice = sc.nextInt();
@@ -50,6 +51,7 @@ class Admin {
 	public static final String RED_COLOR = "\u001B[31m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	public static final String MAGENTA_COLOR = "\u001B[35m";
+	public static final String BEIGE_COLOR = "\u001B[38;5;187m";
 	
 	private int loginAttempts = 3; // (This is Set the maximum number of login attempts...)
 	private boolean locked = false;	
@@ -95,9 +97,9 @@ class Admin {
 		
 	while (true) {
 			System.out.println(RED_COLOR+"-----ADMIN MENU-----"+RESET_COLOR);
-			System.out.println("1. Add Book");
+			System.out.println(BEIGE_COLOR+"1. Add Book");
 			System.out.println("2. Remove Book");
-			System.out.println("3. Logout");
+			System.out.println("3. Logout"+RESET_COLOR);
 
 			System.out.print("Enter your choice: ");
 			int choice = sc.nextInt();
@@ -127,18 +129,19 @@ class Customer {
 	public static final String ORANGE_COLOR = "\u001B[38;5;208m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	public static final String MAGENTA_COLOR = "\u001B[35m";
+	public static final String BEIGE_COLOR = "\u001B[38;5;187m";
 
 	public static void displayCustomerMenu(Scanner sc, Library library) {
 		while (true) {
 			System.out.println(MAGENTA_COLOR+"Welcome To Customer Account."+RESET_COLOR);
 			System.out.println(ORANGE_COLOR+"-----CUSTOMER MENU-----"+RESET_COLOR);
-			System.out.println("1. Display Books");
+			System.out.println(BEIGE_COLOR+"1. Display Books");
 			System.out.println("2. Find Book by ID");
 			System.out.println("3. Find Book by Author");
 			System.out.println("4. Find Book by Price");
 			System.out.println("5. Checkout Book");
 			System.out.println("6. Return Book");
-			System.out.println("7. Exit");
+			System.out.println("7. Exit"+RESET_COLOR);
 
 			System.out.print("Enter your choice: ");
 			int choice = sc.nextInt();
@@ -301,6 +304,7 @@ class Library {
 	
 	public static final String CYAN_COLOR = "\u001B[36m";
 	public static final String BLUE_COLOR = "\u001B[34m";
+	public static final String BROWN_COLOR = "\u001B[38;5;130m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	
 	public Library(int capacity) {
@@ -520,8 +524,8 @@ class Library {
             books[index].setCheckedOutUserName(userName);
             books[index].setCheckedOutUserPhoneNumber(phoneNumber);
             checkedOutBooks[index] = true;
-            System.out.println("Book checked out successfully!");
-            System.out.println(BLUE_COLOR+"Please remember to return the book on time."+RESET_COLOR);
+            System.out.println(BROWN_COLOR+"Book checked out successfully!");
+            System.out.println("Please remember to return the book on time."+RESET_COLOR);
         } else if (index != -1) {
             System.out.println("Book is not available for checkout.");
         } else {
@@ -539,8 +543,8 @@ class Library {
             checkedOutBooks[index] = false;
             books[index].setCheckedOutUserName(null);
             books[index].setCheckedOutUserPhoneNumber(null);
-            System.out.println("Book returned successfully!");
-            System.out.println(BLUE_COLOR+"Thank you for returning the book."+RESET_COLOR);
+            System.out.println(BROWN_COLOR+"Book returned successfully!");
+            System.out.println("Thank you for returning the book."+RESET_COLOR);
         } else if (index != -1 && !checkedOutBooks[index]) {
             System.out.println("Book is not checked out.");
         } else {
