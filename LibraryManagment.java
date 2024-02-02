@@ -170,13 +170,25 @@ class Customer {
                 case 5:
                     System.out.print("Enter the book ID to checkout: ");
                     int checkoutBookId = sc.nextInt();
-                    library.checkoutBook(checkoutBookId);
+					sc.nextLine();
+					System.out.print("Enter your name: ");
+					String checkoutUserName = sc.nextLine();
+					
+					String checkoutphoneNumber = getValidPhoneNumber(sc);
+					
+                    library.checkoutBook(checkoutBookId, checkoutUserName, checkoutphoneNumber);
                     break;
 
                 case 6:
                     System.out.print("Enter the book ID to return: ");
                     int returnBookId = sc.nextInt();
-                    library.returnBook(returnBookId);
+					sc.nextLine();
+					System.out.print("Enter your name: ");
+					String returnUserName = sc.nextLine();
+					
+					String returnphoneNumber = getValidPhoneNumber(sc);
+					
+					library.returnBook(returnBookId, returnUserName, returnphoneNumber);
                     break;
 
                 case 7:
@@ -187,6 +199,18 @@ class Customer {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+    }
+	private static String getValidPhoneNumber(Scanner sc) {
+        String phoneNumber;
+        do {
+            System.out.print("Enter your phone number : ");
+            phoneNumber = sc.nextLine();
+        } while (!isValidPhoneNumber(phoneNumber));
+        return phoneNumber;
+    }
+
+    private static boolean isValidPhoneNumber(String phoneNumber) {
+        return phoneNumber.matches("\\d{10}");
     }
 }
 
@@ -199,6 +223,8 @@ class Book {
     private String author;
     private double price;
     private int availableCopies;
+	private String checkedOutUserName;
+    private String checkedOutUserPhoneNumber;
 
     public Book(int bookId, String title, String author, double price, int availableCopies) {
         this.bookId = bookId;
@@ -240,6 +266,22 @@ class Book {
         availableCopies++;
     }
 	
+	public String getCheckedOutUserName() {
+        return checkedOutUserName;
+    }
+
+    public void setCheckedOutUserName(String checkedOutUserName) {
+        this.checkedOutUserName = checkedOutUserName;
+    }
+
+    public String getCheckedOutUserPhoneNumber() {
+        return checkedOutUserPhoneNumber;
+    }
+
+    public void setCheckedOutUserPhoneNumber(String checkedOutUserPhoneNumber) {
+        this.checkedOutUserPhoneNumber = checkedOutUserPhoneNumber;
+    }
+	
 }
 
 
@@ -258,6 +300,7 @@ class Library {
     private boolean[] checkedOutBooks;
 	
 	public static final String CYAN_COLOR = "\u001B[36m";
+	public static final String BLUE_COLOR = "\u001B[34m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	
 	public Library(int capacity) {
@@ -469,13 +512,16 @@ class Library {
 }
 
     //--> Checkout book method...
-    public void checkoutBook(int bookId) {
+    public void checkoutBook(int bookId, String userName, String phoneNumber) {
         int index = findBookIndexById(bookId);
 
         if (index != -1 && books[index].getAvailableCopies() > 0) {
             books[index].decreaseAvailableCopies();
+            books[index].setCheckedOutUserName(userName);
+            books[index].setCheckedOutUserPhoneNumber(phoneNumber);
             checkedOutBooks[index] = true;
             System.out.println("Book checked out successfully!");
+            System.out.println(BLUE_COLOR+"Please remember to return the book on time."+RESET_COLOR);
         } else if (index != -1) {
             System.out.println("Book is not available for checkout.");
         } else {
@@ -484,19 +530,24 @@ class Library {
     }
 	
 	 //--> Return book method...
-    public void returnBook(int bookId) {
+    public void returnBook(int bookId, String userName, String phoneNumber) {
         int index = findBookIndexById(bookId);
 
-        if (index != -1 && checkedOutBooks[index]) {
+        if (index != -1 && checkedOutBooks[index] && books[index].getCheckedOutUserName().equals(userName)
+                && books[index].getCheckedOutUserPhoneNumber().equals(phoneNumber)) {
             books[index].increaseAvailableCopies();
             checkedOutBooks[index] = false;
+            books[index].setCheckedOutUserName(null);
+            books[index].setCheckedOutUserPhoneNumber(null);
             System.out.println("Book returned successfully!");
-        } else if (index != -1) {
+            System.out.println(BLUE_COLOR+"Thank you for returning the book."+RESET_COLOR);
+        } else if (index != -1 && !checkedOutBooks[index]) {
             System.out.println("Book is not checked out.");
         } else {
-            System.out.println("Book not found in the library.");
+            System.out.println("Book not found in the library or user information does not match.");
         }
     }
+
 	
 	//--> Book Index by Id...
 	private int findBookIndexById(int bookId) {
