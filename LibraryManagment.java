@@ -1,6 +1,6 @@
 import java.util.*;
 
-class ja {
+class LibraryManagment {
 	
 	public static final String BLUE_COLOR = "\u001B[34m";
 	public static final String GREEN_COLOR = "\u001B[32m";
@@ -49,7 +49,6 @@ class ja {
 class Admin {
 	public static final String RED_COLOR = "\u001B[31m";
 	public static final String RESET_COLOR = "\u001B[0m";
-	public static final String CYAN_COLOR = "\u001B[36m";
 	public static final String MAGENTA_COLOR = "\u001B[35m";
 	
 	private int loginAttempts = 3; // (This is Set the maximum number of login attempts...)
@@ -84,7 +83,7 @@ class Admin {
 			System.out.println("Invalid username or password. Login failed.");
 			
 			if (loginAttempts > 0) {
-				System.out.println(CYAN_COLOR+"Remaining login attempts: " + loginAttempts+RESET_COLOR);
+				System.out.println(RED_COLOR+"Remaining login attempts: " + loginAttempts+RESET_COLOR);
 			} else {
 				locked = true;
 				System.out.println("Account locked. Please contact the administrator.");
@@ -258,6 +257,9 @@ class Library {
 	private static boolean booksInitialized = false;
     private boolean[] checkedOutBooks;
 	
+	public static final String CYAN_COLOR = "\u001B[36m";
+	public static final String RESET_COLOR = "\u001B[0m";
+	
 	public Library(int capacity) {
         this.capacity = capacity;
         this.books = new Book[capacity];
@@ -345,7 +347,7 @@ class Library {
     if (numBooks == 0) {
         System.out.println("No books available in the library.");
     } else {
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println(CYAN_COLOR+"---------------------------------------------------------------------------------------------------");
         System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
                 "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
         System.out.println("---------------------------------------------------------------------------------------------------");
@@ -357,7 +359,7 @@ class Library {
                     books[i].getPrice(), books[i].getAvailableCopies(), availabilityStatus);
         }
 
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------"+RESET_COLOR);
     }
 }
 
@@ -375,7 +377,7 @@ class Library {
         Book foundBook = findBookById(bookId);
         if (foundBook != null) {
             System.out.println("Book found:");
-            System.out.println("---------------------------------------------------------------------------------------------------");
+            System.out.println(CYAN_COLOR+"---------------------------------------------------------------------------------------------------");
             System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
                     "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
             System.out.println("---------------------------------------------------------------------------------------------------");
@@ -385,7 +387,7 @@ class Library {
                     foundBook.getBookId(), foundBook.getTitle(), foundBook.getAuthor(),
                     foundBook.getPrice(), foundBook.getAvailableCopies(), availabilityStatus);
 
-            System.out.println("---------------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------------"+RESET_COLOR);
         } else {
             System.out.println("Book not found by ID.");
         }
@@ -405,7 +407,7 @@ class Library {
     Book foundBook = findBookByAuthor(author);
     if (foundBook != null) {
         System.out.println("Book found:");
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println(CYAN_COLOR+"---------------------------------------------------------------------------------------------------");
         System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
                 "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
         System.out.println("---------------------------------------------------------------------------------------------------");
@@ -415,7 +417,7 @@ class Library {
                 foundBook.getBookId(), foundBook.getTitle(), foundBook.getAuthor(),
                 foundBook.getPrice(), foundBook.getAvailableCopies(), availabilityStatus);
 
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------"+RESET_COLOR);
     } else {
         System.out.println("Book not found by Author.");
     }
@@ -448,7 +450,7 @@ class Library {
         System.out.println("No books found under the specified price.");
     } else {
         System.out.println("Books under the specified price:");
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println(CYAN_COLOR+"---------------------------------------------------------------------------------------------------");
         System.out.printf("| %-4s | %-20s | %-15s | %-8s | %-17s | %-16s |\n",
                 "ID", "Title", "Author", "Price", "Available Copies", "Available Status");
         System.out.println("---------------------------------------------------------------------------------------------------");
@@ -462,7 +464,7 @@ class Library {
             }
         }
 
-        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------"+RESET_COLOR);
     }
 }
 
