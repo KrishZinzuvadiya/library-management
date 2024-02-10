@@ -13,7 +13,7 @@ class LibraryManagment {
 		Library library = new Library(10);
 		Admin admin = new Admin("krish", "krish@123");
 		System.out.println(GREEN_COLOR+"-----------------------------------------------------------------");
-		System.out.println("------------------LIBRARY MANAGEMENT SYSTEM-----------------------");
+		System.out.println("------------------LIBRARY MANAGEMENT SYSTEM----------------------");
 		System.out.println("-----------------------------------------------------------------"+RESET_COLOR);
 
 		while (true) {
@@ -49,6 +49,7 @@ class LibraryManagment {
 
 class Admin {
 	public static final String RED_COLOR = "\u001B[31m";
+	public static final String ORANGE_COLOR = "\u001B[38;5;208m";
 	public static final String RESET_COLOR = "\u001B[0m";
 	public static final String MAGENTA_COLOR = "\u001B[35m";
 	public static final String BEIGE_COLOR = "\u001B[38;5;187m";
@@ -96,7 +97,7 @@ class Admin {
 	private void adminMenu(Scanner sc, Library library) {
 		
 	while (true) {
-			System.out.println(RED_COLOR+"-----ADMIN MENU-----"+RESET_COLOR);
+			System.out.println(ORANGE_COLOR+"-----ADMIN MENU-----"+RESET_COLOR);
 			System.out.println(BEIGE_COLOR+"1. Add Book");
 			System.out.println("2. Remove Book");
 			System.out.println("3. Logout"+RESET_COLOR);
